@@ -1,0 +1,56 @@
+script(src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous")
+script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous")
+script.
+	$(document).ready(() => {
+		$(".menu-toggle").click((e) => {
+			e.preventDefault()
+			$("#sidebar-wrapper").toggleClass("active")
+			$(".menu-toggle > .fa-bars, .menu-toggle > .fa-times").toggleClass("fa-bars fa-times")
+			$(this).toggleClass("active")
+		})
+	})
+// LWS Client Config
+script(src='/lws.min.js')
+script.
+	lws.init({
+		el: '.lwsClient',
+		website: {
+			name: 'B*Trade: Advanced Cryptocurrency Exchange',
+			url: 'http://localhost:3007',
+			termsUrl: 'http://localhost:3007/terms',
+			policyUrl: 'http://localhost:3007/policy',
+			apiUrl: 'http://localhost:3007/api/v1/selfkey',
+		},
+		attributes: [
+			{
+				key: "first_name",
+				label: "First Name",
+				attribute: "http://platform.selfkey.org/schema/attribute/first-name.json"
+			},
+			{
+				key: "middle_name",
+				label: "Middle Name",
+				attribute: "http://platform.selfkey.org/schema/attribute/middle-name.json"
+			},
+			{
+				key: "last_name",
+				label: "Last Name",
+				attribute: "http://platform.selfkey.org/schema/attribute/last-name.json"
+			},
+			{
+				key: "email",
+				label: "Email",
+				attribute: "http://platform.selfkey.org/schema/attribute/email.json"
+			},
+			{
+				key: "id_selfie",
+				label: "National ID Selfie",
+				attribute: "http://platform.selfkey.org/schema/attribute/id-selfie.json"
+			},
+			{
+				key: "national_id",
+				label: "National ID",
+				attribute: "http://platform.selfkey.org/schema/attribute/national-id.json"
+			}
+		],
+	});

@@ -1,0 +1,75 @@
+openapi: "3.0.0"
+info:
+  version: "5.0.0"
+  title: BTrade
+
+basePath: /api/v1
+
+schemes:
+  - http
+  - https
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+  - text/plain
+  - text/html
+
+paths:
+  /selfkey:
+    get:
+      description: Returns a nonce
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              nonce:
+                type: string
+        400:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post: 
+      description: Verifies signature completes the authentication process
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nonce:
+                  type: string
+                signature:
+                  type: string
+                publicKey:
+                  type: string
+                attributes:
+                  type: array    
+
+      responses:
+        201:
+          description: Success
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+        400:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+definitions:
+  ErrorResponse:
+    required:
+      - message
+
+    properties:
+      message:
+        type: string

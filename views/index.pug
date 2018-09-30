@@ -1,0 +1,32 @@
+extends _layout
+
+block content
+	h1.pull-right V5
+	p.pull-right Bugatti On Mars Edition
+	.row
+		.col-md-12
+			h1(style='font-size: 64px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;') B*TRADE
+			hr
+			.row
+				.col-md-8
+					h3(style='text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;')
+						em
+							| Trade $ETH, $BTC and $BNY 
+							br
+							
+					br
+					br
+				.col-md-4.text-center
+					form
+						input.form-control(placeholder='Email')
+						br
+						input.form-control(placeholder='Password')
+						br
+					button.btn.btn-success.btn-lg.btn-block(type='button')
+						i.fa.fa-envelope
+						| &nbsp;&nbsp; Email Login
+					br
+					em Or Continue Using
+					br
+					br
+					.lwsClient

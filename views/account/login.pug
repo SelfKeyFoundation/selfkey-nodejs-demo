@@ -1,0 +1,17 @@
+extends ../_layout
+
+block content
+	.page-header.text-center
+		h3 Log In to Continue
+	form.col-md-offset-4.col-md-4(method='POST')
+		input(type='hidden', name='_csrf', value=_csrf)
+		.form-group
+			input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
+		.form-group
+			input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+		.form-group.text-center
+			button.btn.btn-success.btn-block(type='submit')
+				i.fa.fa-user
+				| &nbsp;Log In
+		.form-group.text-center
+			.lwsClient

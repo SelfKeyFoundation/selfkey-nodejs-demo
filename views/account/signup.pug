@@ -1,0 +1,23 @@
+extends ../_layout
+
+block content
+	a.pull-left(href='/')
+		.text-center
+			h3 B*TRADE
+	.page-header.text-center
+		h3 Create a New Account
+	form.col-md-offset-4.col-md-4(id='signup-form', method='POST')
+		input(type='hidden', name='_csrf', value=_csrf)
+		.form-group
+			input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
+		.form-group
+			input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+		.form-group
+			input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
+		.form-group
+			button.btn.btn-success.btn-block(type='submit')
+				i.fa.fa-user-plus
+				| &nbsp;Create Account
+		.form-group.text-center
+			p.text-center or
+			.lwsClient

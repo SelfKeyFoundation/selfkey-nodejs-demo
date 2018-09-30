@@ -1,0 +1,17 @@
+# IDEA
+**/.idea/
+**/target/
+**/*.iml
+
+# Ignore Mac DS_Store files
+.DS_Store
+
+**/package-lock.json
+**/node_modules/
+
+**/*.log
+
+release
+.vscode
+
+**/dist/

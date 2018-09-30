@@ -1,0 +1,16 @@
+if user
+	a.menu-toggle.rounded(href='/account')
+		i.fa.fa-bars
+
+	nav#sidebar-wrapper
+		ul.sidebar-nav
+			li.sidebar-brand(style='padding-bottom: 120px;')
+				a.js-scroll-trigger(href='/')
+					.text-center
+						h3 B*TRADE
+			li.sidebar-nav-item
+				a.js-scroll-trigger(href='/account') My Account
+			li.sidebar-nav-item
+				a.js-scroll-trigger(href='/wallets') My Wallets
+			li.sidebar-nav-item
+				a.js-scroll-trigger(href='/logout') Logout
