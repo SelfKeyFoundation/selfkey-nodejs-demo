@@ -15,3 +15,5 @@ release
 .vscode
 
 **/dist/
+
+public/uploads/

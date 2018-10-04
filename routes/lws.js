@@ -10,7 +10,7 @@ router.get('/api/v1/selfkey', (req, res) => res.status(200).json({nonce: selfkey
 
 router.post('/api/v1/selfkey', passport.authenticate('selfkey'), async (req, res) => {
 	User.findOne({selfkey_wallet: req.body.publicKey}, (err, user) => {
-		res.status(201).json({redirectTo: 'http://localhost:3000/success/' + user.token})
+		res.status(201).json({redirectTo: 'http://localhost:3007/success/' + user.token})
 	})
 })
 

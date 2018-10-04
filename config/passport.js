@@ -9,6 +9,7 @@ const User = require('../db/models/lws_user')
 const uuid = require('node-uuid')
 const base64Img = require('base64-img')
 const path = require('path')
+const request = require('request')
 
 passport.serializeUser((user, done) => {
 	done(null, user.id)
@@ -25,48 +26,53 @@ async function generateToken() {
 }
 
 async function docSort(attributes, publicKey) {
-	try {
-		let docs = []
-		for (let item of JSON.parse(attributes)) {
-			if (item.document == true) {
-				docs.push(
-				base64Img.img(item.data.value, path.join(__dirname, '../', '/public/uploads/', publicKey), item.key, (err, filepath) => {
-					if (err) console.log(err)
-					console.log('doc saved', filepath)
-				}))
-			} else {
-				console.log('notdoc')
+	return new Promise((resolve,reject) => {
+		try {
+			let docs = []
+			for (let item of JSON.parse(attributes)) {
+				if (item.document == true) {
+					docs.push(
+					base64Img.img(item.data.value, path.join(__dirname, '../', '/public/uploads/', publicKey), item.key, (err, filepath) => {
+						if (err) console.log(err)
+						console.log('doc saved', filepath)
+					}))
+				} else {
+					console.log('notdoc')
+				}
 			}
+			resolve(Promise.all(docs))
+		} catch (e) {
+			reject(e)
 		}
-		return Promise.all(docs)
-	} catch (e) {
-		return e
-	}
+	})
 }
 
 async function verify(nonce, signature, publicKey) {
-	try {
-		const form = {
-			nonce,
-			signature,
-			publicKey
+	return new Promise((resolve,reject) => {
+		try {
+			const form = {
+				nonce,
+				signature,
+				publicKey
+			}
+			const options = {
+				url: process.env.SK_SVS_URL,
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				form: form
+			}
+			request.post(options, (err, resp, body) => {
+				if (err) return console.error(err)
+				const pres = JSON.parse(resp.body)
+				resolve(pres.message)
+			})
+		} catch (e) {
+			reject(e)
 		}
-		const options = {
-			url: process.env.SK_SVS_URL,
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json'
-			},
-			form: form
-		}
-		request.post(options, (err, resp, body) => {
-			if (err) return console.error(err)
-			return body.message
-		})
-	} catch (e) {
-		return console.error(e)
-	}
+	})
 }
 
 const loginMsg = {msg: 'Login with SelfKey ID successful'}
@@ -83,7 +89,9 @@ passport.use(new SelfKeyStrategy( async (req, nonce, signature, publicKey, done)
 	const userToken = await generateToken()
 	const userAttributes = await docSort(req.body.attributes, publicKey)
 	const verified = await verify(nonce, signature, publicKey)
-
+	console.log(userToken)
+	console.log(userAttributes)
+	console.log(verified)
 	if (verified) {
 		if (req.user) {
 			User.findOne({selfkey_wallet: publicKey}, (err, existingUser) => {
