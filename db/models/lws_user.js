@@ -23,7 +23,8 @@ const lws_userSchema = new mongoose.Schema({
 	
 	selfkey_wallet: String,
 	nonce: String,
-	attributes: Array
+	attributes: Array,
+	affiliate_id: String
 
 }, { timestamps: true })
 

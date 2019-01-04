@@ -18,9 +18,78 @@ produces:
   - text/html
 
 paths:
-  /selfkey:
+  /auth/challenge:
     get:
-      description: Returns a nonce
+      description: This is the first endpoint to be called in all integration configurations. It will return a Challenge JSON Web Token (C-JWT) 
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+        400:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post: 
+      description: In order to authenticate we will send a signature with the C-JWT in the header to this endpoint. It will return a Wallet JSON Web Token (W-JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signature:
+                  type: string    
+
+      responses:
+        201:
+          description: Success
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+        400:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+  /users:
+    post: 
+      description: This endpoint can be used to simultaneously create a new user and submit identity related data and documents for KYC processing. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attributes:
+                  type: array    
+
+      responses:
+        201:
+          description: Success
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              token:
+                type: string
+        400:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+  /auth/token:
+    get:
+      description: Returns a user token. Requires a valid W-JWT in the header to return successfully.
       responses:
         200:
           description: Success
@@ -34,8 +103,9 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /login:
     post: 
-      description: Verifies signature completes the authentication process
+      description: Dedicated endpoint for login purposes. Returns a redirect URL that will create an authenticated session in the browser.
       requestBody:
         required: true
         content:
@@ -43,22 +113,16 @@ paths:
             schema:
               type: object
               properties:
-                nonce:
-                  type: string
-                signature:
-                  type: string
-                publicKey:
-                  type: string
-                attributes:
-                  type: array    
+                token:
+                  type: string   
 
       responses:
-        201:
+        200:
           description: Success
           schema:
             type: object
             properties:
-              token:
+              redirectUrl:
                 type: string
         400:
           description: Error

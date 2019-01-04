@@ -18,4 +18,10 @@ const user = require('../controllers/user')
 
 	router.get('/wallets', passport.isAuthenticated, user.getWallets)
 
+	router.get('/dash-success', (req, res) => {
+		res.render('success', {
+			title: 'Success'
+		})
+	})
+
 module.exports = router

@@ -29,7 +29,7 @@ async function docSort(attributes, publicKey) {
 	return new Promise((resolve,reject) => {
 		try {
 			let docs = []
-			for (let item of JSON.parse(attributes)) {
+			for (let item of attributes) {
 				if (item.document == true) {
 					docs.push(
 					base64Img.img(item.data.value, path.join(__dirname, '../', '/public/uploads/', publicKey), item.key, (err, filepath) => {
@@ -130,7 +130,7 @@ passport.use(new SelfKeyStrategy( async (req, nonce, signature, publicKey, done)
 					const newUser = {
 						selfkey_wallet: publicKey, 
 						token: userToken,
-						attributes: JSON.parse(req.body.attributes)
+						attributes: req.body.attributes
 					}
 					User.create(newUser, (err, user) => {
 						if (err) return done(err)
