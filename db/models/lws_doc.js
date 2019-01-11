@@ -5,7 +5,11 @@ const Schema = mongoose.Schema
 
 const lws_docSchema = new mongoose.Schema({
 	
-	file: String
+	uid: String,
+	content: String,
+	size: String,
+	mimeType: String,
+	link: String
 
 }, { timestamps: true })
 

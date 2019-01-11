@@ -11,9 +11,15 @@ const upload = multer({ dest: 'public/uploads/' })
 const User = require('../db/models/lws_user')
 const Document = require('../db/models/lws_doc')
 const jwt = require('jsonwebtoken')
+const uuid = require('node-uuid')
+const path = require('path')
 
 const selfkey = require('../../selfkey-lib/lib/selfkey.js')
 
+
+async function generateToken() {
+	return (new String(uuid.v1() + uuid.v4())).replace(/-/g, '')
+}
 
 // API
 const login = async (req, res) => {
@@ -41,8 +47,9 @@ const login = async (req, res) => {
 }
 
 // API
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
 	
+	let publicKey = req.decodedAuth.sub
 	let attributes = req.body.attributes
 
 	try {
@@ -59,21 +66,21 @@ const createUser = (req, res) => {
 	}
 
 	let documents = req.files.map(f => {
+		console.log(f)
+		let uid = f.fieldname.match(/^\$document-([0-9]*)$/) || Math.Random(1,3).toString()
+		console.log(uid)
 		let doc = {
 			mimeType: f.mimetype,
 			size: f.size,
-			content: f.buffer
+			content: f.buffer,
+			link: path.join(__dirname, '../', '/public/uploads/', publicKey, '/', f.originalname),
+			uid: uid
 		}
-		let id = f.fieldname.match(/^\$document-([0-9]*)$/)
-		if (id) doc.id = +id[1]
 		return doc
 	})
 
 	documents = documents.map(doc => {
-		let newDoc = Documents.create(doc)
-		let link = `${HOST}/documents/${newDoc.id}`
-		doc.localId = newDoc.id
-		doc.content = link
+		let newDoc = Document.create(doc)
 		return doc
 	})
 
@@ -89,14 +96,18 @@ const createUser = (req, res) => {
 		return { id: attr.id, value }
 	})
 
-	let publicKey = req.decodedAuth.sub
 
-	let user = Users.findByPublicKey(publicKey)
+	let user = await User.findOne({selfkey_wallet: publicKey})
+	console.log(user)
+
+	let realToken = await generateToken()
 
 	if (user) {
-		user = Users.update(user.id, { attributes })
+		console.log('UPDATE')
+		user = await User.update({selfkey_wallet: publicKey}, { token: realToken, attributes: attributes })
 	} else {
-		user = Users.create({ attributes }, publicKey)
+		console.log('NEW')
+		user = await User.create({selfkey_wallet: publicKey, token: realToken, attributes: attributes})
 	}
 
 	if (!user) {
@@ -106,7 +117,7 @@ const createUser = (req, res) => {
 		})
 	}
 
-	return res.status(201).send()
+	return res.status(201).json()
 }
 
 // API
@@ -115,6 +126,7 @@ const getUserPayload = async (req, res) => {
 	let publicKey = req.decodedAuth.sub
 	console.log(publicKey)
 	let user = await User.findOne({selfkey_wallet: publicKey})
+	console.log(user)
 
 	if (!user) {
 		return res.status(404).json({
@@ -122,13 +134,13 @@ const getUserPayload = async (req, res) => {
 			message: 'User with provided public key does not exist'
 		})
 	}
-	console.log(user)
 
 	let userToken = jwt.sign({}, 'SHHH', { subject: '' + user.selfkey_wallet })
 
 	return res.status(200).json({ token: userToken })
 }
 
+// ROUTES
 
 router.get('/selfkey/v2/auth/challenge/:publicKey', async (req, res) => {
 	
@@ -145,77 +157,12 @@ router.post('/selfkey/v2/auth/challenge', selfkey.jwtAuthMiddleware, async (req,
 
 	let cr = await selfkey.handleChallengeResponse(challenge, signature, publicKey)
 
+	console.log(cr)
+
 	return res.status(cr.status).json(cr)
 })
 
-router.post('/selfkey/v2/users', selfkey.jwtAuthMiddleware, selfkey.serviceAuthMiddleware, upload.any(), async (req, res) => {
-	
-	let attributes = req.body.attributes
-
-	try {
-		attributes = JSON.parse(attributes)
-	} catch (error) {
-		return res.status(400).json({
-			code: 'invalid_attributes',
-			message: 'Attributes field must be a json string'
-		})
-	}
-
-	if (!attributes || !attributes.length) {
-		return res.status(400).json({ code: 'no_attributes', message: 'No attributes provided' })
-	}
-
-	let documents = req.files.map(f => {
-		let doc = {
-			mimeType: f.mimetype,
-			size: f.size,
-			content: f.buffer
-		}
-		let id = f.fieldname.match(/^\$document-([0-9]*)$/)
-		if (id) doc.id = +id[1]
-		return doc
-	})
-
-	documents = documents.map(doc => {
-		let newDoc = Document.create(doc)
-		let link = `${HOST}/documents/${newDoc.id}`
-		doc.localId = newDoc.id
-		doc.content = link
-		return doc
-	})
-
-	attributes = attributes.map(attr => {
-		let attrDocs = attr.documents
-			.map(id => {
-				let found = documents.filter(doc => doc.id === id)
-				return found.length ? found[0] : null
-			})
-			.filter(doc => !!doc)
-		attr = { ...attr, documents: attrDocs }
-		let { value } = selfkey.denormalizeDocumentsSchema(attr.schema, attr.data, attrDocs)
-		return { id: attr.id, value }
-	})
-
-	// let publicKey = req.decodedAuth.sub
-
-	// let user = Users.findByPublicKey(publicKey)
-
-	// if (user) {
-	// 	user = Users.update(user.id, { attributes })
-	// } else {
-	// 	user = Users.create({ attributes }, publicKey)
-	// }
-
-	// if (!user) {
-	// 	return res.status(400).json({
-	// 		code: 'could_not_create',
-	// 		message: 'Could not create user'
-	// 	})
-	// }
-
-	return res.status(201).json({redirectTo: 'http://localhost:3007/success/'})
- 
-})
+router.post('/selfkey/v2/users', selfkey.jwtAuthMiddleware, selfkey.serviceAuthMiddleware, upload.any(), createUser)
 
 router.get('/selfkey/v2/auth/token', selfkey.jwtAuthMiddleware, selfkey.serviceAuthMiddleware, getUserPayload)
 

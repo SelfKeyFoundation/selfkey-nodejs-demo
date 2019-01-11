@@ -7,7 +7,6 @@ block content
 		pre= user
 
 		for item in user.attributes
-			pre= item.data.value
+			pre= item.value
 		br
-		img(src=`${imagebase}${user.selfkey_wallet}/id_selfie.jpg`, width='540px')
-		img(src=`${imagebase}${user.selfkey_wallet}/national_id.jpg`, width='540px')
+		img(src=`${imagebase}${user.selfkey_wallet}`, width='540px')
