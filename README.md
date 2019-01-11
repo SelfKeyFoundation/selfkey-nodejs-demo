@@ -20,7 +20,7 @@ LWS currently provides some NPM packages along with some custom configuration to
 
 ### Environment Variables
 ```
-SK_PORT=3000
+SK_PORT=3007
 SK_URL=https://yoursite.com
 SK_API_URL=http://yoursite.com/api/v1
 SK_SVS_URL=http://yoursite.com/svs
@@ -28,6 +28,7 @@ SK_MONGO_URI=mongodb://localhost:27017/yourdb
 SK_MONGO_USER=dbuser
 SK_MONGO_PASS=pass1234
 SK_SESSION_SECRET=secret1234
+SK_JWT_SECRET=jwtsecret1234
 ```
 
 ### LWS Integration
