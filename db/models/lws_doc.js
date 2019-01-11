@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 
 const lws_docSchema = new mongoose.Schema({
 	
-	uid: String,
+	id: String,
 	content: String,
 	size: String,
 	mimeType: String,
