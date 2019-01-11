@@ -10,17 +10,19 @@ script.
 		})
 	})
 // LWS Client Config
-script(src='https://unpkg.com/lws-js-client@1.0.0-beta.16/dist/lws.min.js')
+script(src='/lws.min.js')
 script.
 	lws.init({
-		el: '.lwsClient',
+		ui: {
+			el: '.lwsClient'
+		}	,	
 		website: {
 			name: 'B*Trade: Advanced Cryptocurrency Exchange',
 			url: 'http://localhost:3007',
 			termsUrl: 'http://localhost:3007/terms',
-			policyUrl: 'http://localhost:3007/policy',
-			apiUrl: 'http://localhost:3007/api/v1/selfkey',
+			policyUrl: 'http://localhost:3007/policy'
 		},
+		rootEndpoint: '/selfkey/v2',
 		attributes: [
 			{
 				key: "first_name",
@@ -51,11 +53,6 @@ script.
 				key: "national_id",
 				label: "National ID",
 				attribute: "http://platform.selfkey.org/schema/attribute/national-id.json"
-			},
-			//- {
-			//- 	key: "nationaliy",
-			//- 	label: "Nationality",
-			//- 	attribute: "http://platform.selfkey.org/schema/attribute/nationality.json"
-			//- }
-		],
+			}
+		]
 	});
