@@ -106,7 +106,7 @@ const getUserPayload = async (req, res) => {
 			message: 'User with provided public key does not exist'
 		})
 	}
-	let userToken = jwt.sign({}, 'SHHH', { subject: '' + user.selfkey_wallet })
+	let userToken = jwt.sign({}, JWT_SECRET, { subject: '' + user.selfkey_wallet })
 	return res.status(200).json({ token: userToken })
 }
 
