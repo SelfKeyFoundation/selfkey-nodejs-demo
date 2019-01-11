@@ -12,6 +12,7 @@ const Document = require('../db/models/lws_doc')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const path = require('path')
+const JWT_SECRET = process.env.SK_JWT_SECRET
 
 // development sourced library
 const selfkey = require('../../selfkey-lib/lib/selfkey.js')
@@ -27,10 +28,8 @@ const login = async (req, res) => {
 		return res.status(400).json({ redirectTo: '/login' })
 	}	
 	try {
-		let decoded = await jwt.verify(body.token, 'SHHH')
-		console.log(decoded)
+		let decoded = await jwt.verify(body.token, JWT_SECRET)
 		let user = await User.findOne({selfkey_wallet: decoded.sub})
-		console.log(user)
 		if (!user) {
 			return res.status(404).json({ redirectTo: '/login' })
 		}
@@ -61,8 +60,8 @@ const createUser = async (req, res) => {
 			mimeType: f.mimetype,
 			size: f.size,
 			content: f.buffer,
-			link: path.join(__dirname, '../', '/public/uploads/', publicKey, '/', f.originalname),
-			uid: id
+			link: path.join(__dirname, '../', '/public/uploads/', publicKey),
+			id: +id[1]
 		}
 		return doc
 	})
