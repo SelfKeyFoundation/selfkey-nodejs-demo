@@ -82,7 +82,7 @@
     "redux": "^3.x.x",
     "redux-immutable": "3.0.8",
     "redux-logger": "*",
-    "remarkable": "^1.7.1",
+    "remarkable": "^2.0.0",
     "reselect": "2.5.3",
     "scroll-to-element": "^2.0.0",
     "serialize-error": "2.0.0",
