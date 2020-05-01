@@ -40,7 +40,9 @@
     "e2e": "npm-run-all --parallel -r hot-e2e-server mock-api test-e2e",
     "open-static": "node -e 'require(\"open\")(\"http://localhost:3002\")'",
     "serve-static": "http-server dist/ -i -a 0.0.0.0 -p 3002",
-    "start": "npm-run-all --parallel serve-static open-static"
+    "start": "npm-run-all --parallel serve-static open-static",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@braintree/sanitize-url": "^2.0.2",
@@ -94,7 +96,8 @@
     "xml": "1.0.1",
     "xml-but-prettier": "^1.0.1",
     "yaml-js": "0.2.0",
-    "zenscroll": "4.0.1"
+    "zenscroll": "4.0.1",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "autoprefixer": "7.1.1",
@@ -173,5 +176,6 @@
     "include": [
       "**/src/core/plugins/**.js"
     ]
-  }
+  },
+  "snyk": true
 }
