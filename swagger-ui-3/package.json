@@ -51,7 +51,7 @@
     "core-js": "^2.5.1",
     "css.escape": "1.5.1",
     "deep-extend": "0.5.1",
-    "dompurify": "^1.0.4",
+    "dompurify": "^2.0.15",
     "expect": "1.20.2",
     "getbase": "^2.8.2",
     "ieee754": "^1.1.8",
